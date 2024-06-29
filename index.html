@@ -4,7 +4,41 @@
     <meta charset="UTF-8">
     <title>GREEN-API Test Page</title>
     <style>
-        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .container {
+            display: flex;
+        }
+        .left {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .right {
+            flex: 2;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 500px;
+            overflow-y: scroll;
+        }
     </style>
     <script>
         async function apiCall(url, method = 'GET', body = null) {
@@ -41,9 +75,13 @@
             const apiTokenInstance = document.getElementById('apiTokenInstance').value;
             const chatId = document.getElementById('chatId').value;
             const message = document.getElementById('message').value;
+            if (!chatId.endsWith('@c.us') && !chatId.endsWith('@g.us')) {
+                alert('chatId must end with @c.us for individual chats or @g.us for group chats');
+                return;
+            }
             const url = `https://api.green-api.com/waInstance${idInstance}/sendMessage/${apiTokenInstance}`;
             const body = {
-                chatId: `${chatId}@c.us`,
+                chatId: chatId,
                 message: message
             };
             apiCall(url, 'POST', body);
@@ -52,12 +90,16 @@
         function sendFileByUrl() {
             const idInstance = document.getElementById('idInstance').value;
             const apiTokenInstance = document.getElementById('apiTokenInstance').value;
-            const chatId = document.getElementById('chatId').value;
+            const chatId = document.getElementById('chatIdFile').value;
             const urlFile = document.getElementById('urlFile').value;
             const fileName = urlFile.split('/').pop();
+            if (!chatId.endsWith('@c.us') && !chatId.endsWith('@g.us')) {
+                alert('chatId must end with @c.us for individual chats or @g.us for group chats');
+                return;
+            }
             const url = `https://api.green-api.com/waInstance${idInstance}/sendFileByUrl/${apiTokenInstance}`;
             const body = {
-                chatId: `${chatId}@c.us`,
+                chatId: chatId,
                 urlFile: urlFile,
                 fileName: fileName
             };
@@ -66,38 +108,48 @@
     </script>
 </head>
 <body>
-    <div>
-        <label for="idInstance">idInstance:</label>
-        <input type="text" id="idInstance" value="7103952863">
+    <div class="container">
+        <div class="left">
+            <div>
+                <label for="idInstance">idInstance:</label>
+                <input type="text" id="idInstance">
+            </div>
+            <div>
+                <label for="apiTokenInstance">ApiTokenInstance:</label>
+                <input type="text" id="apiTokenInstance">
+            </div>
+            <div>
+                <button onclick="getSettings()">getSettings</button>
+            </div>
+            <div>
+                <button onclick="getStateInstance()">getStateInstance</button>
+            </div>
+            <div>
+                <label for="chatId">Chat ID:</label>
+                <input type="text" id="chatId">
+            </div>
+            <div>
+                <label for="message">Message:</label>
+                <input type="text" id="message">
+            </div>
+            <div>
+                <button onclick="sendMessage()">sendMessage</button>
+            </div>
+            <div>
+                <label for="chatIdFile">Chat ID:</label>
+                <input type="text" id="chatIdFile">
+            </div>
+            <div>
+                <label for="urlFile">File URL:</label>
+                <input type="text" id="urlFile">
+            </div>
+            <div>
+                <button onclick="sendFileByUrl()">sendFileByUrl</button>
+            </div>
+        </div>
+        <div class="right">
+            <pre id="response"></pre>
+        </div>
     </div>
-    <div>
-        <label for="apiTokenInstance">ApiTokenInstance:</label>
-        <input type="text" id="apiTokenInstance" value="85fb7cfa95254a9185e0939e2b18d426189e19f19d8740de9d">
-    </div>
-    <div>
-        <button onclick="getSettings()">getSettings</button>
-    </div>
-    <div>
-        <button onclick="getStateInstance()">getStateInstance</button>
-    </div>
-    <div>
-        <label for="chatId">Chat ID:</label>
-        <input type="text" id="chatId">
-    </div>
-    <div>
-        <label for="message">Message:</label>
-        <input type="text" id="message">
-    </div>
-    <div>
-        <button onclick="sendMessage()">sendMessage</button>
-    </div>
-    <div>
-        <label for="urlFile">File URL:</label>
-        <input type="text" id="urlFile">
-    </div>
-    <div>
-        <button onclick="sendFileByUrl()">sendFileByUrl</button>
-    </div>
-    <pre id="response"></pre>
 </body>
 </html>
