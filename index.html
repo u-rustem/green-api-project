@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Методы GREEN-API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .field-container {
+            margin-bottom: 20px;
+        }
+        .field-container input, .field-container button {
+            margin: 5px 0;
+        }
+        .response-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .response-container label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Методы GREEN-API</h1>
+        <div class="field-container">
+            <input type="text" id="idInstance" placeholder="idInstance">
+            <input type="text" id="ApiTokenInstance" placeholder="ApiTokenInstance">
+            <button onclick="getSettings()">getSettings</button>
+            <button onclick="getStateInstance()">getStateInstance</button>
+        </div>
+        <div class="field-container">
+            <input type="text" id="chatIdMessage" placeholder="chatId">
+            <input type="text" id="messageText" placeholder="Hello World!">
+            <button onclick="sendMessage()">sendMessage</button>
+        </div>
+        <div class="field-container">
+            <input type="text" id="chatIdFile" placeholder="chatId">
+            <input type="text" id="fileUrl" placeholder="https://example.com/image.png">
+            <button onclick="sendFileByUrl()">sendFileByUrl</button>
+        </div>
+        <div class="response-container">
+            <label>Ответ:</label>
+            <div class="response" id="response"></div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'https://api.green-api.com';
+
+        function displayResponse(data) {
+            document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function getSettings() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiToken = document.getElementById('ApiTokenInstance').value;
+            const response = await fetch(`${baseUrl}/waInstance${idInstance}/getSettings/${apiToken}`);
+            const data = await response.json();
+            displayResponse(data);
+        }
+
+        async function getStateInstance() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiToken = document.getElementById('ApiTokenInstance').value;
+            const response = await fetch(`${baseUrl}/waInstance${idInstance}/getStateInstance/${apiToken}`);
+            const data = await response.json();
+            displayResponse(data);
+        }
+
+        async function sendMessage() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiToken = document.getElementById('ApiTokenInstance').value;
+            const chatId = document.getElementById('chatIdMessage').value;
+            const message = document.getElementById('messageText').value;
+            const response = await fetch(`${baseUrl}/waInstance${idInstance}/sendMessage/${apiToken}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "chatId": chatId,
+                    "message": message
+                })
+            });
+            const data = await response.json();
+            displayResponse(data);
+        }
+
+        async function sendFileByUrl() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiToken = document.getElementById('ApiTokenInstance').value;
+            const chatId = document.getElementById('chatIdFile').value;
+            const urlFile = document.getElementById('fileUrl').value;
+            const response = await fetch(`${baseUrl}/waInstance${idInstance}/sendFileByUrl/${apiToken}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "chatId": chatId,
+                    "urlFile": urlFile,
+                    "fileName": urlFile.split('/').pop()
+                })
+            });
+            const data = await response.json();
+            displayResponse(data);
+        }
+    </script>
+</body>
+</html>
